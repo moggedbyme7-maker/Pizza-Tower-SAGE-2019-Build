@@ -1,0 +1,7 @@
+[LLVM-OPERAGX]
+EMSDKDir="C:/source/emsdk/emsdk.bat"
+[OperaGX]
+DisplayName="Hello"
+NewDebugger=0
+ProjectGuid="abbd1771-f7cd-4f5f-8d37-118fa90771ef"
+Splash="splash.png"
