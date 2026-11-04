@@ -22,6 +22,12 @@
     <!-- Relative links targeting the assets folder -->
     <link rel="stylesheet" href="assets/index-232229dc.css">
     <script type="module" crossorigin src="assets/index-e14a4958.js"></script>
+    <script>
+  // Prevent GX.games API fetches
+  window.__assetsPath = function(path) {
+    return 'assets/' + (path || '');
+  };
+</script>
   </head>
   <body>
     <canvas id="canvas"></canvas>
