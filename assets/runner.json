@@ -1,6 +1,0 @@
-{
-  "gameName": "Pizza Tower SAGE 2019",
-  "dataUrl": "assets/runner.data",
-  "wasmUrl": "assets/runner.wasm",
-  "sidecarUrl": "assets/runner.unx"
-}
