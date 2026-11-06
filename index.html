@@ -30,13 +30,13 @@
     <canvas id="canvas" width="960" height="540" tabindex="1"></canvas>
 
     <script>
-        // Force canvas focus on click
+        // Canvas focus on user click
         var canvasElem = document.getElementById('canvas');
         window.addEventListener('click', function() {
             canvasElem.focus();
         });
 
-        // 1. Bypass GX.games domain checks
+        // 1. Domain referral spoofing for GX games
         Object.defineProperty(document, 'referrer', {
             get: function() { return 'https://gx.games/'; },
             configurable: true
@@ -50,12 +50,16 @@
         window.setPostloadMethod = function() {};
         window.__assetsPath = function(path) { return 'assets/' + (path || ''); };
 
-        // 3. Emscripten WebAssembly Memory Allocation (Fixes 'memory access out of bounds')
+        // 3. Pre-allocate 1GB (16384 pages of 64KB) WebAssembly memory to prevent out-of-bounds crash
+        var customWasmMemory = new WebAssembly.Memory({
+            initial: 16384,
+            maximum: 32768
+        });
+
         var Module = {
             canvas: canvasElem,
             arguments: ["--game", "assets/game.unx"],
-            INITIAL_MEMORY: 1073741824, // Allocate 1 GB WebAssembly heap memory
-            ALLOW_MEMORY_GROWTH: true,
+            wasmMemory: customWasmMemory,
             locateFile: function(path) {
                 return 'assets/' + path;
             }
