@@ -1,3 +1,4 @@
+<!-- See JavaScript console to see errors and runtime, loading the game will take place inside DevTools-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,10 +50,12 @@
         window.setPostloadMethod = function() {};
         window.__assetsPath = function(path) { return 'assets/' + (path || ''); };
 
-        // 3. Force Emscripten & Runner to locate binaries in assets/
+        // 3. Emscripten WebAssembly Memory Allocation (Fixes 'memory access out of bounds')
         var Module = {
             canvas: canvasElem,
             arguments: ["--game", "assets/game.unx"],
+            INITIAL_MEMORY: 1073741824, // Allocate 1 GB WebAssembly heap memory
+            ALLOW_MEMORY_GROWTH: true,
             locateFile: function(path) {
                 return 'assets/' + path;
             }
