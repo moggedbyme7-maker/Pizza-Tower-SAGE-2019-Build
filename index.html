@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pizza Tower SAGE 2019 Demo</title>
+    <title>Pizza Tower SAGE 2019</title>
     <style>
         body, html {
             margin: 0;
@@ -21,21 +21,49 @@
             aspect-ratio: 16 / 9;
             width: 100vw;
             max-height: 100vh;
+            outline: none;
         }
     </style>
 </head>
 <body>
-    <canvas id="canvas" width="960" height="540"></canvas>
-    
+    <canvas id="canvas" width="960" height="540" tabindex="1"></canvas>
+
     <script>
-        // Override GX environment variables before runner starts
+        // Force canvas focus on click
+        var canvasElem = document.getElementById('canvas');
+        window.addEventListener('click', function() {
+            canvasElem.focus();
+        });
+
+        // 1. Bypass GX.games domain checks
+        Object.defineProperty(document, 'referrer', {
+            get: function() { return 'https://gx.games/'; },
+            configurable: true
+        });
+
+        // 2. GX runtime stubs
+        window.g_pWadLoadCallback = function() {};
+        window.manifestFiles = function() { return []; };
+        window.setAddAsyncMethod = function() {};
+        window.setPreloadMethod = function() {};
+        window.setPostloadMethod = function() {};
+        window.__assetsPath = function(path) { return 'assets/' + (path || ''); };
+
+        // 3. Force Emscripten & Runner to locate binaries in assets/
+        var Module = {
+            canvas: canvasElem,
+            arguments: ["--game", "assets/game.unx"],
+            locateFile: function(path) {
+                return 'assets/' + path;
+            }
+        };
+
         window.gamedata = {
             dataUrl: "assets/runner.data",
             wasmUrl: "assets/runner.wasm",
             unxUrl: "assets/game.unx"
         };
     </script>
-    <script src="assets/runner.wasm"></script>
     <script src="assets/runner.js"></script>
 </body>
 </html>
