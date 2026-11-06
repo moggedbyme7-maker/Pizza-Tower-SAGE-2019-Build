@@ -1,4 +1,3 @@
-<!-- See JavaScript console to see errors and runtime, loading the game will take place inside DevTools-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,19 +29,16 @@
     <canvas id="canvas" width="960" height="540" tabindex="1"></canvas>
 
     <script>
-        // Canvas focus on user click
         var canvasElem = document.getElementById('canvas');
         window.addEventListener('click', function() {
             canvasElem.focus();
         });
 
-        // 1. Domain referral spoofing for GX games
         Object.defineProperty(document, 'referrer', {
             get: function() { return 'https://gx.games/'; },
             configurable: true
         });
 
-        // 2. GX runtime stubs
         window.g_pWadLoadCallback = function() {};
         window.manifestFiles = function() { return []; };
         window.setAddAsyncMethod = function() {};
@@ -50,7 +46,6 @@
         window.setPostloadMethod = function() {};
         window.__assetsPath = function(path) { return 'assets/' + (path || ''); };
 
-        // 3. Pre-allocate 1GB (16384 pages of 64KB) WebAssembly memory to prevent out-of-bounds crash
         var customWasmMemory = new WebAssembly.Memory({
             initial: 16384,
             maximum: 32768
@@ -58,17 +53,17 @@
 
         var Module = {
             canvas: canvasElem,
-            arguments: ["--game", "assets/game.unx"],
+            arguments: ["--game", "assets/game.bin"],
             wasmMemory: customWasmMemory,
             locateFile: function(path) {
                 return 'assets/' + path;
             }
         };
 
-      window.gamedata = {
+        window.gamedata = {
             dataUrl: "assets/runner.data",
             wasmUrl: "assets/runner.wasm",
-            unxUrl: "api/game"
+            unxUrl: "assets/game.bin"
         };
     </script>
     <script src="assets/runner.js"></script>
