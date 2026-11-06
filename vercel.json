@@ -2,18 +2,25 @@
   "cleanUrls": true,
   "headers": [
     {
-      "source": "/assets/(.*)",
+      "source": "/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
     {
-      "source": "/(.*)\\.unx",
+      "source": "/assets/game.unx",
       "headers": [
         { "key": "Content-Encoding", "value": "identity" },
         { "key": "Content-Type", "value": "application/octet-stream" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/game.unx",
+      "headers": [
+        { "key": "Content-Encoding", "value": "identity" },
+        { "key": "Content-Type", "value": "application/octet-stream" },
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
       ]
     }
   ]
