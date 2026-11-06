@@ -2,49 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pizza Tower SAGE 2019 Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body, html {
             margin: 0;
             padding: 0;
             background-color: #000;
-            overflow: hidden;
             width: 100%;
             height: 100%;
+            overflow: hidden;
         }
         #canvas {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            aspect-ratio: 16 / 9;
             width: 100vw;
-            max-height: 100vh;
+            height: 100vh;
             outline: none;
         }
     </style>
 </head>
 <body>
-    <canvas id="canvas" width="960" height="540" tabindex="1"></canvas>
+    <canvas id="canvas" tabindex="1"></canvas>
 
     <script>
         var canvasElem = document.getElementById('canvas');
-        window.addEventListener('click', function() {
-            canvasElem.focus();
-        });
+        window.addEventListener('click', function() { canvasElem.focus(); });
 
         Object.defineProperty(document, 'referrer', {
             get: function() { return 'https://gx.games/'; },
             configurable: true
         });
 
-        window.g_pWadLoadCallback = function() {};
+        // Direct Hugging Face raw binary stream
+        var binaryUrl = "https://huggingface.co/datasets/Moggerd/pizza-tower-sage-build/resolve/main/game.unx";
+
+        // Intercept XMLHttpRequest calls for game.unx
+        var originalOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url) {
+            if (typeof url === 'string' && url.includes('game.unx')) {
+                url = binaryUrl;
+            }
+            return originalOpen.apply(this, arguments);
+        };
+
+        // Intercept fetch API calls for game.unx
+        var originalFetch = window.fetch;
+        window.fetch = function(resource, init) {
+            if (typeof resource === 'string' && resource.includes('game.unx')) {
+                resource = binaryUrl;
+            } else if (resource instanceof Request && resource.url.includes('game.unx')) {
+                resource = binaryUrl;
+            }
+            return originalFetch.call(this, resource, init);
+        };
+
+        // Mandatory GameMaker runtime stubs
         window.manifestFiles = function() { return []; };
+        window.g_pWadLoadCallback = function() {};
         window.setAddAsyncMethod = function() {};
         window.setPreloadMethod = function() {};
         window.setPostloadMethod = function() {};
-        window.__assetsPath = function(path) { return 'assets/' + (path || ''); };
+
+        window.__assetsPath = function(path) {
+            if (!path || path.includes('game.unx')) {
+                return binaryUrl;
+            }
+            if (path.startsWith('http://') || path.startsWith('https://')) {
+                return path;
+            }
+            return 'https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/' + path;
+        };
 
         var customWasmMemory = new WebAssembly.Memory({
             initial: 16384,
@@ -53,19 +82,19 @@
 
         var Module = {
             canvas: canvasElem,
-            arguments: ["--game", "assets/game.bin"],
+            arguments: ["--game", binaryUrl],
             wasmMemory: customWasmMemory,
             locateFile: function(path) {
-                return 'assets/' + path;
+                return 'https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/' + path;
             }
         };
 
         window.gamedata = {
-            dataUrl: "assets/runner.data",
-            wasmUrl: "assets/runner.wasm",
-            unxUrl: "assets/game.bin"
+            dataUrl: "https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/runner.data",
+            wasmUrl: "https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/runner.wasm",
+            unxUrl: binaryUrl
         };
     </script>
-    <script src="assets/runner.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/runner.js"></script>
 </body>
 </html>
