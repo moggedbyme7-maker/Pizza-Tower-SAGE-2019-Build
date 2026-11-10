@@ -39,6 +39,7 @@
             configurable: true
         });
 
+        // Direct Hugging Face raw binary stream (CORS-enabled)
         var binaryUrl = "https://huggingface.co/datasets/Moggerd/pizza-tower-sage-build/resolve/main/game.unx";
 
         var originalOpen = XMLHttpRequest.prototype.open;
@@ -95,8 +96,6 @@
             unxUrl: binaryUrl
         };
     </script>
-
-    <!-- Make sure this URL matches your GitHub repo structure -->
     <script src="https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/runner.js"></script>
 </body>
 </html>
