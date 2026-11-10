@@ -39,8 +39,9 @@
             configurable: true
         });
 
-        // Direct Hugging Face raw binary stream (CORS-enabled)
-        var binaryUrl = "https://huggingface.co/datasets/Moggerd/pizza-tower-sage-build/resolve/main/game.unx";
+        // Hugging Face raw file base URL
+        var hfBase = "https://huggingface.co/datasets/Moggerd/pizza-tower-sage-build/resolve/main/";
+        var binaryUrl = hfBase + "game.unx";
 
         var originalOpen = XMLHttpRequest.prototype.open;
         XMLHttpRequest.prototype.open = function(method, url) {
@@ -73,7 +74,7 @@
             if (path.startsWith('http://') || path.startsWith('https://')) {
                 return path;
             }
-            return 'https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/' + path;
+            return hfBase + path;
         };
 
         var customWasmMemory = new WebAssembly.Memory({
@@ -86,16 +87,16 @@
             arguments: ["--game", binaryUrl],
             wasmMemory: customWasmMemory,
             locateFile: function(path) {
-                return 'https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/' + path;
+                return hfBase + path;
             }
         };
 
         window.gamedata = {
-            dataUrl: "https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/runner.data",
-            wasmUrl: "https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/runner.wasm",
+            dataUrl: hfBase + "runner.data",
+            wasmUrl: hfBase + "runner.wasm",
             unxUrl: binaryUrl
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/gh/moggedbyme7-maker/Pizza-Tower-SAGE-2019-Build@main/assets/runner.js"></script>
+    <script src="https://huggingface.co/datasets/Moggerd/pizza-tower-sage-build/resolve/main/runner.js"></script>
 </body>
 </html>
